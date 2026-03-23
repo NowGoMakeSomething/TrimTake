@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrimTake</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="header">
+    <h1>TrimTake</h1>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span class="version">v1.0.0</span>
+      <button class="settings-toggle" id="settingsToggle" title="Settings">&#9881;</button>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <span class="status-dot" id="statusDot"></span>
+    <span id="statusText">Connecting to backend...</span>
+  </div>
+
+  <!-- Settings Panel -->
+  <div class="settings-panel" id="settingsPanel">
+    <div class="section">
+      <div class="section-title">Settings</div>
+
+      <div class="setting-row">
+        <label>Sensitivity</label>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <input type="range" id="sensitivity" min="0" max="100" value="70">
+          <span class="range-value" id="sensitivityValue">70%</span>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <label>Padding before (ms)</label>
+        <input type="number" id="paddingBefore" value="50" min="0" max="500" step="10">
+      </div>
+
+      <div class="setting-row">
+        <label>Padding after (ms)</label>
+        <input type="number" id="paddingAfter" value="50" min="0" max="500" step="10">
+      </div>
+
+      <label style="display:block;margin-top:8px;font-size:11px;color:var(--text-secondary);">
+        Filler words (comma-separated)
+      </label>
+      <textarea class="filler-words-input" id="fillerWords">um, uh, ah, er, like, you know, I mean, basically, actually, literally, right, so yeah, kind of, sort of</textarea>
+    </div>
+  </div>
+
+  <!-- Source Section -->
+  <div class="section">
+    <div class="section-title">Source</div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnAnalyzeSequence">Use Current Sequence</button>
+    </div>
+    <div style="margin-top:8px;">
+      <button class="btn btn-secondary" id="btnUploadAudio">Upload Audio File</button>
+      <input type="file" id="audioFileInput" accept="audio/*,video/*" style="display:none;">
+    </div>
+
+    <div class="progress-container" id="progressContainer">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressBar"></div>
+      </div>
+      <div class="progress-label" id="progressLabel">Analyzing...</div>
+    </div>
+  </div>
+
+  <!-- Results Section -->
+  <div class="section" id="resultsSection" style="display:none;">
+    <div class="section-title">Detected Filler Words</div>
+
+    <div class="select-all-row">
+      <label>
+        <input type="checkbox" id="selectAll" checked>
+        Select All
+      </label>
+      <span class="result-count" id="resultCount">0 items</span>
+    </div>
+
+    <div class="results-container" id="resultsContainer"></div>
+
+    <div style="margin-top:10px;" class="btn-row">
+      <button class="btn btn-primary" id="btnApplyCuts" disabled>Apply Cuts</button>
+      <button class="btn btn-secondary" id="btnExportMarkers">Export Markers</button>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div class="empty-state" id="emptyState">
+    <div class="icon">&#9986;</div>
+    <p>Analyze a sequence or upload audio<br>to detect filler words.</p>
+  </div>
+
+  <script src="js/csi.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
