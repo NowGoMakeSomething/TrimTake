@@ -1,8 +1,30 @@
 # TrimTake
 
-Adobe Premiere Pro CEP panel plugin that uses AI to automatically detect and remove filler words (ums, ahs, you know, like, etc.) from video/audio tracks.
+Adobe Premiere Pro extension that uses AI to automatically detect and remove filler words (ums, ahs, you know, like, etc.) from video/audio tracks.
 
-## How It Works
+## For Users — Quick Install
+
+### Step 1: Install the Backend
+
+Download `TrimTake-backend.dmg`, open it, and drag **TrimTake Backend** to your Applications folder. Open it — you'll see a notification when the server is running.
+
+### Step 2: Install the Premiere Pro Extension
+
+Download [ZXPInstaller](https://zxpinstaller.com) (free). Open it and drag `TrimTake-panel.zxp` onto the ZXPInstaller window.
+
+### Step 3: Open in Premiere Pro
+
+Launch (or restart) Premiere Pro. Go to **Window > Extensions > TrimTake**.
+
+### Step 4: Configure
+
+Click the Settings icon in the TrimTake panel and enter your [Anthropic API key](https://console.anthropic.com). Adjust sensitivity and padding to your preference, then start editing.
+
+---
+
+## For Developers
+
+### How It Works
 
 1. Open the TrimTake panel inside Premiere Pro
 2. Click **Use Current Sequence** or upload an audio file
@@ -10,7 +32,7 @@ Adobe Premiere Pro CEP panel plugin that uses AI to automatically detect and rem
 4. Review the detected fillers with timestamps and confidence scores
 5. Select which ones to remove, then click **Apply Cuts**
 
-## Project Structure
+### Project Structure
 
 ```
 trimtake/
@@ -28,54 +50,41 @@ trimtake/
   scripts/
     install.sh                 Install extension to Premiere
     setup.js                   First-run setup
+    build-zxp.sh               Package ZXP extension
+    build-mac-app.sh           Build macOS .app bundle
+    build-dmg.sh               Package .app into DMG
+  dist/
+    TrimTake-panel.zxp         Adobe extension (install with ZXPInstaller)
+    TrimTake-backend.dmg       Mac app (drag to Applications)
+    README-install.txt         Simple install guide
 ```
 
-## Prerequisites
+### Prerequisites
 
 - Adobe Premiere Pro CC 2018+ (CEP 8+)
 - Node.js 18+
 - Anthropic API key (for Claude-powered analysis)
 
-## Installation
-
-### 1. Run setup
+### Dev Installation
 
 ```bash
-node scripts/setup.js
+node scripts/setup.js                # Install dependencies
+export ANTHROPIC_API_KEY=your-key    # Set API key
+bash scripts/install.sh              # Install extension to Premiere
+cd backend && npm start              # Start backend on localhost:3333
 ```
 
-This installs backend dependencies and validates your environment.
-
-### 2. Set your API key
-
-```bash
-export ANTHROPIC_API_KEY=your-key-here
-```
-
-Without this, the backend will use mock filler data for testing.
-
-### 3. Install the extension
-
-```bash
-bash scripts/install.sh
-```
-
-This copies the panel to Premiere's extensions folder and enables debug mode for unsigned extensions.
-
-### 4. Start the backend
+### Building Distribution Packages
 
 ```bash
 cd backend
-npm start
+npm run build:zxp    # Build ZXP extension package
+npm run build:app    # Build macOS .app bundle
+npm run build:dmg    # Package .app into DMG installer
+npm run build:all    # Build everything
 ```
 
-The server runs on `http://localhost:3333`.
-
-### 5. Open in Premiere Pro
-
-Restart Premiere Pro, then go to **Window > Extensions > TrimTake**.
-
-## API Endpoints
+### API Endpoints
 
 | Method | Path       | Description                          |
 |--------|-----------|--------------------------------------|
@@ -83,13 +92,13 @@ Restart Premiere Pro, then go to **Window > Extensions > TrimTake**.
 | POST   | /analyze  | Analyze audio for filler words       |
 | POST   | /apply    | Generate ExtendScript to apply cuts  |
 
-## Settings
+### Settings
 
 - **Sensitivity** — Minimum confidence threshold (0-100%)
 - **Padding** — Milliseconds of padding before/after each cut
 - **Filler words** — Comma-separated list of words to detect
 
-## Development
+### Development
 
 Run the backend in watch mode:
 

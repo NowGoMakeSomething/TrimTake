@@ -5,12 +5,17 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "build:zxp": "bash ../scripts/build-zxp.sh",
+    "build:app": "bash ../scripts/build-mac-app.sh",
+    "build:dmg": "bash ../scripts/build-dmg.sh",
+    "build:all": "npm run build:zxp && npm run build:app && npm run build:dmg"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.52.0",
     "express": "^4.21.0",
     "multer": "^1.4.5-lts.1",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "openai": "^4.73.0"
   }
 }

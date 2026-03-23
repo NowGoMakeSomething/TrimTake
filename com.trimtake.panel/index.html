@@ -10,91 +10,143 @@
 
   <div class="header">
     <h1>TrimTake</h1>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <span class="version">v1.0.0</span>
-      <button class="settings-toggle" id="settingsToggle" title="Settings">&#9881;</button>
+    <div class="header-right">
+      <span class="plan-badge" id="planBadge">FREE</span>
+      <span class="version">v1.1</span>
+      <button class="settings-toggle" id="settingsToggle" title="Settings (S)">&#9881;</button>
     </div>
+  </div>
+
+  <!-- Usage Bar -->
+  <div class="usage-bar-section" id="usageBarSection">
+    <div class="usage-track">
+      <div class="usage-fill" id="usageFill"></div>
+    </div>
+    <div class="usage-text" id="usageText">— of — min used this month</div>
+    <div class="usage-plan-info" id="usagePlanInfo">Free Plan</div>
+  </div>
+
+  <!-- Upgrade Banner (hidden by default) -->
+  <div class="upgrade-banner" id="upgradeBanner" style="display:none;">
+    <div class="upgrade-banner-text" id="upgradeBannerText"></div>
+    <button class="btn btn-upgrade" id="btnUpgrade">Upgrade</button>
   </div>
 
   <div class="status-bar">
-    <span class="status-dot" id="statusDot"></span>
-    <span id="statusText">Connecting to backend...</span>
+    <span class="status-dot connecting" id="statusDot"></span>
+    <span id="statusText">Connecting...</span>
   </div>
 
-  <!-- Settings Panel -->
-  <div class="settings-panel" id="settingsPanel">
-    <div class="section">
-      <div class="section-title">Settings</div>
+  <div class="content">
 
-      <div class="setting-row">
-        <label>Sensitivity</label>
-        <div style="display:flex;align-items:center;gap:6px;">
-          <input type="range" id="sensitivity" min="0" max="100" value="70">
-          <span class="range-value" id="sensitivityValue">70%</span>
+    <!-- Settings Panel (animated) -->
+    <div class="settings-panel" id="settingsPanel">
+      <div class="settings-inner">
+        <div class="section-title">Settings</div>
+
+        <div class="setting-row">
+          <label>API Key</label>
+          <span class="api-key-status" id="apiKeyStatus">not set</span>
         </div>
+        <div class="api-key-row">
+          <input type="password" id="apiKeyInput" placeholder="sk-ant-..." spellcheck="false">
+          <button class="btn btn-secondary btn-sm" id="btnSaveApiKey">Save</button>
+        </div>
+
+        <div class="setting-row" style="margin-top:8px;">
+          <label>Sensitivity</label>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <input type="range" id="sensitivity" min="0" max="100" value="70">
+            <span class="range-value" id="sensitivityValue">70%</span>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <label>Pad before</label>
+          <input type="number" id="paddingBefore" value="50" min="0" max="500" step="10">
+        </div>
+
+        <div class="setting-row">
+          <label>Pad after</label>
+          <input type="number" id="paddingAfter" value="50" min="0" max="500" step="10">
+        </div>
+
+        <label style="display:block;margin-top:6px;font-size:10px;color:var(--text-muted);">
+          Filler words (comma-separated)
+        </label>
+        <textarea class="filler-words-input" id="fillerWords">um, uh, ah, er, like, you know, I mean, basically, actually, literally, right, so yeah, kind of, sort of</textarea>
+      </div>
+    </div>
+
+    <!-- Source Section -->
+    <div class="section">
+      <div class="section-title">Source</div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btnAnalyzeSequence">
+          &#9654; Analyze Sequence
+        </button>
+      </div>
+      <div style="margin-top:6px;">
+        <button class="btn btn-secondary" id="btnUploadAudio">&#128194; Upload Audio File</button>
+        <input type="file" id="audioFileInput" accept="audio/*,video/*" style="display:none;">
       </div>
 
-      <div class="setting-row">
-        <label>Padding before (ms)</label>
-        <input type="number" id="paddingBefore" value="50" min="0" max="500" step="10">
+      <div class="progress-container" id="progressContainer">
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+        <div class="progress-label" id="progressLabel">Analyzing...</div>
+      </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="section" id="resultsSection" style="display:none;">
+      <div class="section-title">Detected Fillers</div>
+
+      <div class="summary-bar" id="summaryBar">
+        <span class="stat"><strong id="totalCount">0</strong> detected</span>
+        <span class="stat"><strong id="selectedCount">0</strong> selected</span>
+        <span class="stat">~<strong id="totalDuration">0.0</strong>s</span>
       </div>
 
-      <div class="setting-row">
-        <label>Padding after (ms)</label>
-        <input type="number" id="paddingAfter" value="50" min="0" max="500" step="10">
+      <div class="select-all-row">
+        <label>
+          <input type="checkbox" id="selectAll" checked>
+          Select all
+        </label>
+        <span class="result-count" id="resultCount">0 items</span>
       </div>
 
-      <label style="display:block;margin-top:8px;font-size:11px;color:var(--text-secondary);">
-        Filler words (comma-separated)
-      </label>
-      <textarea class="filler-words-input" id="fillerWords">um, uh, ah, er, like, you know, I mean, basically, actually, literally, right, so yeah, kind of, sort of</textarea>
-    </div>
-  </div>
+      <div class="results-container" id="resultsContainer"></div>
 
-  <!-- Source Section -->
-  <div class="section">
-    <div class="section-title">Source</div>
-    <div class="btn-row">
-      <button class="btn btn-primary" id="btnAnalyzeSequence">Use Current Sequence</button>
-    </div>
-    <div style="margin-top:8px;">
-      <button class="btn btn-secondary" id="btnUploadAudio">Upload Audio File</button>
-      <input type="file" id="audioFileInput" accept="audio/*,video/*" style="display:none;">
-    </div>
-
-    <div class="progress-container" id="progressContainer">
-      <div class="progress-bar-bg">
-        <div class="progress-bar-fill" id="progressBar"></div>
+      <div style="margin-top:8px;" class="btn-row">
+        <button class="btn btn-primary" id="btnApplyCuts" disabled>
+          &#9988; Apply Cuts
+        </button>
+        <button class="btn btn-secondary" id="btnExportMarkers">&#9873; Markers</button>
       </div>
-      <div class="progress-label" id="progressLabel">Analyzing...</div>
-    </div>
-  </div>
-
-  <!-- Results Section -->
-  <div class="section" id="resultsSection" style="display:none;">
-    <div class="section-title">Detected Filler Words</div>
-
-    <div class="select-all-row">
-      <label>
-        <input type="checkbox" id="selectAll" checked>
-        Select All
-      </label>
-      <span class="result-count" id="resultCount">0 items</span>
+      <div style="margin-top:4px;" class="btn-row">
+        <button class="btn btn-secondary btn-sm" id="btnExportCSV">Export CSV</button>
+        <button class="btn btn-secondary btn-sm" id="btnExportJSON">Export JSON</button>
+      </div>
     </div>
 
-    <div class="results-container" id="resultsContainer"></div>
-
-    <div style="margin-top:10px;" class="btn-row">
-      <button class="btn btn-primary" id="btnApplyCuts" disabled>Apply Cuts</button>
-      <button class="btn btn-secondary" id="btnExportMarkers">Export Markers</button>
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState">
+      <div class="icon">&#9986;</div>
+      <p>Analyze a sequence or upload audio<br>to detect filler words.</p>
+      <div class="subtitle">Keyboard: <span class="kbd">A</span> analyze &middot; <span class="kbd">S</span> settings</div>
     </div>
+
   </div>
 
-  <!-- Empty state -->
-  <div class="empty-state" id="emptyState">
-    <div class="icon">&#9986;</div>
-    <p>Analyze a sequence or upload audio<br>to detect filler words.</p>
+  <!-- Subtle upgrade link at bottom -->
+  <div class="upgrade-footer" id="upgradeFooter">
+    <a href="#" id="btnUpgradeLink">Upgrade Plan</a>
   </div>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toastContainer"></div>
 
   <script src="js/csi.js"></script>
   <script src="js/main.js"></script>
